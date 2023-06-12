@@ -15,7 +15,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     var gameNode: SKNode!       //遊戲節點
     var groundNode: SKNode!     //地面節點
     var backgroundNode: SKNode! //背景節點
-    var cactusNode: SKNode!     //仙人掌節點
+    var cactusNode: SKNode!     //地面陷阱節點
     var dinosaurNode: SKNode!   //恐龍節點
     var birdNode: SKNode!       //鳥節點
     
@@ -53,7 +53,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
 
     let groundCategory = 1 << 0 as UInt32 //地面碰撞分類
     let dinoCategory = 1 << 1 as UInt32   //恐龍碰撞分類
-    let cactusCategory = 1 << 3 as UInt32 //仙人掌碰撞分類
+    let cactusCategory = 1 << 3 as UInt32 //地面陷阱碰撞分類
     let birdCategory = 1 << 3 as UInt32   //鳥碰撞分類
     
     override func didMove(to view: SKView) {
@@ -86,8 +86,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         dinosaurNode.zPosition = foreground //設定節點的Z軸位置為前景
         createDinosaur() //創建恐龍
         
-        //仙人掌
-        cactusNode = SKNode() //仙人掌節點
+        //地面陷阱
+        cactusNode = SKNode() //地面陷阱節點
         cactusNode.zPosition = foreground //設定節點的Z軸位置為前景
         
         //鳥
@@ -115,7 +115,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         gameNode.addChild(groundNode) //將地面節點加入遊戲父節點中
         gameNode.addChild(backgroundNode) //將背景節點加入遊戲父節點中
         gameNode.addChild(dinosaurNode) //將恐龍節點加入遊戲父節點中
-        gameNode.addChild(cactusNode) //將仙人掌節點加入遊戲父節點中
+        gameNode.addChild(cactusNode) //將地面陷阱節點加入遊戲父節點中
         gameNode.addChild(birdNode) //將鳥節點加入遊戲父節點中
         gameNode.addChild(scoreNode) //將分數標籤節點加入遊戲父節點中
         gameNode.addChild(resetInstructions) //將重置說明標籤節點加入遊戲父節點中
@@ -173,7 +173,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     }
 
     func hitCactus(_ contact: SKPhysicsContact) -> Bool {
-    // 判斷是否與仙人掌接觸
+    // 判斷是否與地面陷阱接觸
         return contact.bodyA.categoryBitMask & cactusCategory == cactusCategory ||
             contact.bodyB.categoryBitMask & cactusCategory == cactusCategory
     }
@@ -195,7 +195,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         groundSpeed = 500  // 地面速度重置為500
         score = 0  // 分數重置為0
         
-        cactusNode.removeAllChildren()  // 移除所有仙人掌節點
+        cactusNode.removeAllChildren()  // 移除所有地面陷阱節點
         birdNode.removeAllChildren()  // 移除所有鳥節點
         
         resetInstructions.fontColor = SKColor.clear // 重置指示的字體顏色為白色
@@ -460,17 +460,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         func spawnCactus() {
             let cactusTextures = ["cactus1", "cactus2", "cactus3", "doubleCactus", "tripleCactus"]
             let cactusScale = 0.3 as CGFloat
-            // 仙人掌紋理圖片名稱陣列和縮放比例
+            // 地面陷阱紋理圖片名稱陣列和縮放比例
             
             // 紋理圖片
             let cactusTexture = SKTexture(imageNamed: "dino.assets/cacti/" + cactusTextures.randomElement()!)
             cactusTexture.filteringMode = .nearest
-            // 隨機選取仙人掌紋理圖片並設定最近濾鏡模式
+            // 隨機選取地面陷阱紋理圖片並設定最近濾鏡模式
             
             // 精靈
             let cactusSprite = SKSpriteNode(texture: cactusTexture)
             cactusSprite.setScale(cactusScale)
-            // 設定仙人掌精靈的紋理圖片和縮放比例
+            // 設定地面陷阱的紋理圖片和縮放比例
             
             // 物理屬性
             let contactBox = CGSize(width: cactusTexture.size().width * cactusScale, height: cactusTexture.size().height * cactusScale)
@@ -480,35 +480,35 @@ class GameScene: SKScene, SKPhysicsContactDelegate
             cactusSprite.physicsBody?.categoryBitMask = cactusCategory
             cactusSprite.physicsBody?.contactTestBitMask = dinoCategory
             cactusSprite.physicsBody?.collisionBitMask = groundCategory
-            // 設定仙人掌精靈的物理體屬性，包括碰撞箱大小、動態屬性、質量、碰撞和接觸檢測屬性
+            // 設定地面陷阱的物理體屬性，包括碰撞箱大小、動態屬性、質量、碰撞和接觸檢測屬性
             
             // 添加到場景
             cactusNode.addChild(cactusSprite)
-            // 將仙人掌精靈添加到場景中
+            // 將地面陷阱添加到場景中
             
             // 動畫
             animateCactus(sprite: cactusSprite, texture: cactusTexture)
-            // 執行仙人掌精靈的動畫
+            // 執行地面陷阱的動畫
         }
 
         func animateCactus(sprite: SKSpriteNode, texture: SKTexture) {
             let screenWidth = self.frame.size.width
             let distanceOffscreen = 10.0 as CGFloat
             let distanceToMove = screenWidth + distanceOffscreen + texture.size().width
-            // 螢幕寬度、仙人掌移出螢幕距離和仙人掌移動距離的計算
+            // 螢幕寬度、地面陷阱移出螢幕距離和地面陷阱移動距離的計算
             
             // 動作
             let moveCactus = SKAction.moveBy(x: -distanceToMove, y: 0.0, duration: TimeInterval(screenWidth / groundSpeed))
-            // 仙人掌精靈的移動動作，往左移動指定距離，持續時間根據螢幕寬度和地面速度計算
+            // 地面陷阱的移動動作，往左移動指定距離，持續時間根據螢幕寬度和地面速度計算
             let removeCactus = SKAction.removeFromParent()
-            // 將仙人掌精靈從父節點中移除的動作
+            // 將地面陷阱從父節點中移除的動作
             let moveAndRemove = SKAction.sequence([moveCactus, removeCactus])
             // 將移動和移除動作組合成序列動作
             
             sprite.position = CGPoint(x: distanceToMove, y: getGroundHeight() + texture.size().height + 100)  //地面障礙物高度
-            // 設定仙人掌精靈的初始位置，使其位於地面高度加上紋理圖片高度的位置
+            // 設定地面陷阱的初始位置，使其位於地面高度加上紋理圖片高度的位置
             sprite.run(moveAndRemove)
-            // 執行仙人掌精靈的移動和移除動作
+            // 執行地面陷阱的移動和移除動作
         }
 
         func spawnBird() {
